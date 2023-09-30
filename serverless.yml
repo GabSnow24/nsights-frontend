@@ -1,0 +1,4 @@
+nsightsFrontend:
+  component: "@sls-next/serverless-component"
+  inputs:
+    enableS3Acceleration: false
