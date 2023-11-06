@@ -23,7 +23,7 @@ const ApexChartWrapper = styled('div')(({ theme }) => ({
       },
       '&.apexcharts-theme-dark': {
         '& .apexcharts-tooltip-text-label, & .apexcharts-tooltip-text-value': {
-          color: theme.palette.common.white
+          color: "#FFFFFF"
         }
       },
       '& .bar-chart': {
@@ -59,7 +59,6 @@ const ApexChartWrapper = styled('div')(({ theme }) => ({
     '& .apexcharts-text, & .apexcharts-tooltip-text, & .apexcharts-datalabel-label, & .apexcharts-datalabel': {
       filter: 'none',
       fontWeight: 400,
-      fill: theme.palette.text.primary,
       fontFamily: `${theme.typography.fontFamily} !important`
     },
     '& .apexcharts-pie-label': {

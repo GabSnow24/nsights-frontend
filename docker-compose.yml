@@ -1,0 +1,8 @@
+version: '3.3'
+
+services:
+  nsights-frontend:
+    container_name: frontend
+    image: qzzdockernsights-frontend:latest
+    ports:
+      - 8080:3000

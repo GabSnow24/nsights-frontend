@@ -26,7 +26,7 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Startups',
       icon: Rocket,
-      path: '/account-settings'
+      path: '/startups'
     },
     {
       title: 'Founders',

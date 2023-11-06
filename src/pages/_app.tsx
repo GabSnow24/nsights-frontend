@@ -32,6 +32,8 @@ import 'react-perfect-scrollbar/dist/css/styles.css'
 
 // ** Global css styles
 import '../../styles/globals.css'
+import { StartupProvider } from 'src/@core/context/startupData'
+import { AiExpertProvider } from 'src/@core/context/aiExpertContext'
 
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
@@ -57,16 +59,17 @@ if (themeConfig.routingLoader) {
 // ** Configure JSS & ClassName
 const App = (props: ExtendedAppProps) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps: { session, ...pageProps } } = props
-
+  
   // Variables
-  const getLayout = Component.getLayout ?? (page => <UserLayout>{page}</UserLayout>)
+  const getLayout = Component.getLayout ?? (page => <UserLayout title={props.pageProps.title}>{page}</UserLayout>)
 
   return (
-    
+    <AiExpertProvider>
+    <StartupProvider>
     <SessionProvider session={session}>
       <CacheProvider value={emotionCache}>
         <Head>
-          <title>{`${themeConfig.templateName} - Seu App de Gerenciamento de Dados`}</title>
+          <title>{`${themeConfig.templateName} - Alternative Data Insights`}</title>
           <meta
             name='description'
             content={`${themeConfig.templateName} – Nsights – é a plataforma mais fácil e amigável para gerenciar dados.`}
@@ -83,6 +86,8 @@ const App = (props: ExtendedAppProps) => {
         </SettingsProvider>
       </CacheProvider>
     </SessionProvider>
+    </StartupProvider>
+    </AiExpertProvider>
   )
 }
 

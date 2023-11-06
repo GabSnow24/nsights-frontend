@@ -25,6 +25,7 @@ import FavoriteDropdown from 'src/@core/layouts/components/shared-components/Fav
 
 interface Props {
   hidden: boolean
+  title: string
   settings: Settings
   toggleNavVisibility: () => void
   saveSettings: (values: Settings) => void
@@ -40,7 +41,7 @@ const TypographyHeaderText = styled(Typography)<TypographyProps>(({ }) => ({
 
 const AppBarContent = (props: Props) => {
   // ** Props
-  const { settings, saveSettings, toggleNavVisibility } = props
+  const { settings, saveSettings, toggleNavVisibility, title } = props
 
   // ** Hook
   const hiddenSm = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'))
@@ -56,7 +57,7 @@ const AppBarContent = (props: Props) => {
         >
           <Menu />
         </IconButton>
-        <TypographyHeaderText > Dashboard </TypographyHeaderText>
+        <TypographyHeaderText > {title} </TypographyHeaderText>
 
       </Box>
 

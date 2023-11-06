@@ -21,9 +21,10 @@ import { useSettings } from 'src/@core/hooks/useSettings'
 
 interface Props {
   children: ReactNode
+  title: string
 }
 
-const UserLayout = ({ children }: Props) => {
+const UserLayout = ({ children, title  }: Props) => {
   // ** Hooks
   const { settings, saveSettings } = useSettings()
 
@@ -49,6 +50,7 @@ const UserLayout = ({ children }: Props) => {
       ) => (
         <VerticalAppBarContent
           hidden={hidden}
+          title={title}
           settings={settings}
           saveSettings={saveSettings}
           toggleNavVisibility={props.toggleNavVisibility}
