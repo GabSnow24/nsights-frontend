@@ -27,10 +27,11 @@ const Startups = () => {
 
   useEffect(() => {
     const startupId = router.query.startup
-    const foundedStartup = startupsData.data.find((row) => {      
-return row.id === startupId
-    })
-    setStartup(foundedStartup as Row)
+    fetch(`https://app.n-sights.ai/backend-api/enterprises/${startupId}`)
+      .then(response => response.json())
+      .then(data => {
+        setStartup(data as Row)
+      })
   }, [startupsData, router])
 
 
@@ -46,7 +47,7 @@ return row.id === startupId
             <Typography sx={{ fontSize: '1rem', mt: 3, ml: 2 }}>/ {startup?.orgName} </Typography>
           </Card>
         </Grid>
-        <Grid item xs={12}  lg={6} sx={{ mt: 5 }}>
+        <Grid item xs={12} lg={6} sx={{ mt: 5 }}>
           <Grid container spacing={6}>
             <Grid item xs={8} sm={6} md={8} >
               <StartupPhoto title={startup?.orgName} category="Software" imagePath={startup?.imageUrl ? `https://${startup.imageUrl}` : "/images/cards/startup.png"} />
@@ -55,7 +56,7 @@ return row.id === startupId
         </Grid>
         <Grid item xs={12} sx={{ height: "100%", mt: 5 }}>
           <Card sx={{ height: "100%", display: 'flex' }}>
-            <FullWidthTabs startupData={startup}/>
+            <FullWidthTabs startupData={startup} />
           </Card>
         </Grid>
       </Grid>
@@ -74,7 +75,7 @@ export async function getServerSideProps(context: any) {
     }
   }
 
-  return { props: { session, title:"Startups" } }
+  return { props: { session, title: "Startups" } }
 }
 
 export default Startups

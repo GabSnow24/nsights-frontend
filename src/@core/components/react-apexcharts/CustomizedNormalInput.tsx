@@ -13,7 +13,7 @@ interface InputBaseProps {
 }
 export default function CustomizedInputBase(props: InputBaseProps) {
 
-    const { searchData, cleanFilteredData, startupsData, saveFiltered, multipleFilterSearch, filteredData } = useStartup()
+    const { filterData, cleanFilteredData, startupsData, saveFiltered, multipleFilterSearch, filteredData } = useStartup()
     const { title, filterField } = props
     const optionsList = startupsData.data.reduce((accumulator: Row[], current) => {
         if (!accumulator.find((item) => item[filterField as keyof Row] === current[filterField as keyof Row])) {
@@ -42,7 +42,7 @@ export default function CustomizedInputBase(props: InputBaseProps) {
     }
 
     const onInputChange = (value: string) => {
-        searchData(value, filterField)
+        filterData(value)
     }
 
 

@@ -6,7 +6,7 @@ import CardContent from '@mui/material/CardContent'
 
 // ** Types Imports
 import { Button, Grid, TextField } from '@mui/material'
-import { DataGrid, GridEventListener, GridPaginationModel, GridRowId, GridToolbar, GridToolbarColumnsButton, GridToolbarContainer, GridToolbarDensitySelector, GridToolbarExport, GridToolbarFilterButton } from '@mui/x-data-grid';
+import { DataGrid, GridEventListener, GridPaginationModel, GridRowId, GridToolbarColumnsButton, GridToolbarContainer, GridToolbarDensitySelector, GridToolbarExport, GridToolbarFilterButton } from '@mui/x-data-grid';
 
 import React, { useEffect, useState } from 'react'
 import { useStartup } from 'src/@core/hooks/useStartup'
@@ -20,7 +20,7 @@ const StartupDataGrid = (props: any) => {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const mapPageToNextCursor = React.useRef<{ [page: number]: GridRowId }>({});
-    const { searchData, startupsData, saveData, filteredData, saveFiltered, saveSelected, selectedData } = useStartup()
+    const { searchData, startupsData, saveData, filteredData, saveFiltered, saveSelected, selectedData, saveSearchText, searchText } = useStartup()
     const [paginationModel, setPaginationModel] = useState({
         page: 0,
         pageSize: 8,
@@ -28,18 +28,18 @@ const StartupDataGrid = (props: any) => {
 
     function CustomToolbar() {
         return (
-          <GridToolbarContainer>
-            <GridToolbarColumnsButton />
-            <GridToolbarFilterButton />
-            <GridToolbarDensitySelector />
-            <GridToolbarExport />
-            <Button onClick={handleOpen}>
-                <AiExpert/>
-                <Typography sx={{ fontWeight:"500", color:"#9155FD", fontSize: '0.8rem', ml:2}}>AI EXPERT</Typography>  
-            </Button>
-          </GridToolbarContainer>
+            <GridToolbarContainer>
+                <GridToolbarColumnsButton />
+                <GridToolbarFilterButton />
+                <GridToolbarDensitySelector />
+                <GridToolbarExport />
+                <Button onClick={handleOpen}>
+                    <AiExpert />
+                    <Typography sx={{ fontWeight: "500", color: "#9155FD", fontSize: '0.8rem', ml: 2 }}>AI EXPERT</Typography>
+                </Button>
+            </GridToolbarContainer>
         );
-      }
+    }
 
     const [rowCountState, setRowCountState] = React.useState(
         startupsData?.total || 0,
@@ -61,34 +61,49 @@ const StartupDataGrid = (props: any) => {
     };
 
     const handleEvent: GridEventListener<'cellClick'> = (
-        params, 
-      ) => {
-        if(selectedData.data.find((row)=> row == params.row)){
-            const dataToSave = selectedData.data.filter((row)=>{
+        params,
+    ) => {
+        if (selectedData.data.find((row) => row == params.row)) {
+            const dataToSave = selectedData.data.filter((row) => {
                 return row.id !== params.row.id
             })
-            saveSelected({...selectedData, data: dataToSave})
-            
-return 
-        }
-        saveSelected({...selectedData, data:[...selectedData.data, params.row]})
-      };
+            saveSelected({ ...selectedData, data: dataToSave })
 
-      const handleColumn = (
-        params: any, 
-      ) => {
-        if(params.field !== "__check__") return
-        if( selectedData.data.length === 0){
-            saveSelected(startupsData)
-            
-return 
+            return
         }
-        saveSelected({...selectedData, data:[]})
-      };
+        saveSelected({ ...selectedData, data: [...selectedData.data, params.row] })
+    };
+
+    const handleColumn = (
+        params: any,
+    ) => {
+        if (params.field !== "__check__") return
+        if (selectedData.data.length === 0) {
+            saveSelected(startupsData)
+
+            return
+        }
+        saveSelected({ ...selectedData, data: [] })
+    };
 
     useEffect(() => {
-        
+
         const { page, pageSize } = paginationModel
+
+        if (searchText !== "") {
+
+            setTimeout(()=>{
+                searchData(searchText, page)
+                setRowCountState((prevRowCountState: any) =>
+                    filteredData.total !== undefined
+                        ? filteredData.total
+                        : prevRowCountState,
+                );
+            }, 1000)
+            
+return 
+        }
+
         fetch(`https://app.n-sights.ai/backend-api/enterprises?limit=${pageSize}&page=${page + 1}`)
             .then(response => response.json())
             .then(data => {
@@ -100,7 +115,7 @@ return
                         : prevRowCountState,
                 );
             })
-    }, [setRowCountState, paginationModel])
+    }, [setRowCountState, paginationModel, searchText])
 
     return (
         <Card>
@@ -114,7 +129,7 @@ return
                                     size='small'
                                     sx={{ '& .MuiOutlinedInput-root': { borderRadius: 1, backgroundColor: "#FFFFFF" }, mr: 5, width: 400, }}
                                     placeholder="Search Starups via Company name or website"
-                                    onChange={(e) => searchData(e.target.value)}
+                                    onChange={(e) => saveSearchText(e.target.value)}
                                 />
                             </Grid>
                         </Grid>
@@ -144,7 +159,7 @@ return
                     </CardContent>
                 </Grid>
             </Grid>
-            <AiExpertModal open={open} handleClose={handleClose}/>
+            <AiExpertModal open={open} handleClose={handleClose} />
         </Card >
 
     )

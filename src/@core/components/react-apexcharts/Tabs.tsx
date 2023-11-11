@@ -92,7 +92,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 export default function BasicTabs() {
-    const { searchData } = useStartup()
+    const { saveSearchText } = useStartup()
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -141,7 +141,7 @@ export default function BasicTabs() {
                                         </InputAdornment>
                                     ),
                                 }}
-                                onChange={(e) => searchData(e.target.value)}
+                                onChange={(e) => saveSearchText(e.target.value)}
                             />
                             <ListItem divider sx={{ height: 80 }}>
                                 <ListItemText primary="Filters" />

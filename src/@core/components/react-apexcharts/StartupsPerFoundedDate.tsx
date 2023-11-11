@@ -83,7 +83,7 @@ return
         chart: {
             parentHeightOffset: 0,
 
-            toolbar: { show: false },
+            // toolbar: { show: false },
         },
         stroke: {
             curve: 'smooth'

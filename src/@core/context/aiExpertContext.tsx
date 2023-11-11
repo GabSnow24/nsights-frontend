@@ -1,12 +1,13 @@
 // ** React Imports
-import { createContext, useState, ReactNode, useEffect } from 'react'
+import { createContext, useState, ReactNode } from 'react'
 
 
 
 export type AiExpertContextValue = {
   textInput: string
   messages: MessageData[]
-  saveMessages: (updatedMessage: MessageData) => void
+  saveMessages: (updatedMessage: MessageData[]) => void
+  saveMessage: (updatedMessage: MessageData) => void
   cleanMessages: () => void
   saveText: (updatedString: string) => void
 }
@@ -25,6 +26,7 @@ export type MessageData = {
 export const AiExpertContext = createContext<AiExpertContextValue>({
   saveText: () => null,
   saveMessages: () => null,
+  saveMessage: () => null,
   cleanMessages: () => null,
   messages: [],
   textInput: ""
@@ -43,8 +45,11 @@ export const AiExpertProvider = ({ children }: { children: ReactNode }) => {
     setTextInput(updatedString)
   }
 
-  const saveMessages = (updatedMessage: MessageData) => {
-    console.log(updatedMessage)
+  const saveMessages = (updatedMessages: MessageData[]) => {
+    setMessages(messages.concat(updatedMessages))
+  }
+
+  const saveMessage = (updatedMessage: MessageData) => {
     setMessages([...messages, updatedMessage ])
   }
 
@@ -55,7 +60,7 @@ export const AiExpertProvider = ({ children }: { children: ReactNode }) => {
 
 
 
-  return <AiExpertContext.Provider value={{ cleanMessages, messages, saveMessages, textInput, saveText }}>{children}</AiExpertContext.Provider>
+  return <AiExpertContext.Provider value={{ cleanMessages, messages, saveMessages, saveMessage, textInput, saveText }}>{children}</AiExpertContext.Provider>
 }
 
 export const StartupConsumer = AiExpertContext.Consumer

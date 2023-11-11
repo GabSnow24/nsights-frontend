@@ -77,7 +77,7 @@ return
     })
 
     const dataSeries = enterprisesData.map((value: any) => {
-        return (((value.y * 100) / startupsData?.total)*100).toFixed(2) as unknown as number
+        return (((value.y * 100) / startupsData?.total)).toFixed(2) as unknown as number
     })
 
     const chartOptions: ApexOptions = {

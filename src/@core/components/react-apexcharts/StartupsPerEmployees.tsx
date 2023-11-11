@@ -1,5 +1,4 @@
 // ** MUI Imports
-import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
@@ -111,13 +110,14 @@ return
         },
         xaxis: {
             categories,
+            
           },
         grid: {
             strokeDashArray: 7,
             padding: {
                 top: -1,
                 right: 0,
-                left: -12,
+                left: 0,
                 bottom: 5
             }
         },
@@ -156,14 +156,12 @@ return
                 </Grid>
                 <Grid container direction="column" justifyContent="center" alignItems="center">
                     <CardContent >
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start' }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', color: 'success.main' }}>
+                            
                                 <ReactApexcharts type='bar' height={700} width={710} options={chartOptions} series={[{
                                     name: 'Per Number of Employees',
                                     data: dataSeries
                                 }]} />
-                            </Box>
-                        </Box>
+                            
                     </CardContent>
                 </Grid>
             </Grid>

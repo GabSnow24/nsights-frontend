@@ -12,11 +12,11 @@ export type Row = {
   operatingStatus: string
   contactEmail: string
   companyPhone: string
-  totalFundingAmountCurrency:string
-  totalFundingAmount:number
+  totalFundingAmountCurrency: string
+  totalFundingAmount: number
   similarCompanies: string
   shortDescription: string
-  twitter:string
+  twitter: string
   website: string
   linkedin: string
   country: string
@@ -105,13 +105,16 @@ export type StartupsData = {
 
 export type StartupContextValue = {
   startupsData: StartupsData
+  searchText: string
   filteredData: StartupsData
   selectedData: StartupsData
   saveFiltered: (filtered: StartupsData) => void
+  filterData: (filter: string) => void
+  saveSearchText: (search: string) => void
   clearFilters: () => void
   saveSelected: (selected: StartupsData) => void
   saveData: (updatedRows: StartupsData) => void
-  searchData: (searchValue: string, specificRow?: string) => void
+  searchData: (searchValue: string, page:number) => void
   multipleFilterSearch: (filter: any) => Row[]
   cleanFilteredData: (filterField?: any) => void,
   filters: Filters,
@@ -165,12 +168,15 @@ const defaultFilters: Filters = {
 // ** Create Context
 export const StartupContext = createContext<StartupContextValue>({
   saveData: () => null,
+  filterData: () => null,
+  saveSearchText: () => null,
   searchData: () => null,
   saveFiltered: () => null,
   saveSelected: () => null,
   multipleFilterSearch: () => [],
   cleanFilteredData: () => null,
-  clearFilters:() => null,
+  clearFilters: () => null,
+  searchText:"",
   startupsData: {
     data: [],
     limit: 0,
@@ -198,6 +204,8 @@ export const StartupContext = createContext<StartupContextValue>({
 
 export const StartupProvider = ({ children }: { children: ReactNode }) => {
   // ** State
+
+  const [searchText, setSearchText] = useState("")
   const [startupsData, setStartupsData] = useState<StartupsData>({
     data: [],
     limit: 0,
@@ -229,6 +237,10 @@ export const StartupProvider = ({ children }: { children: ReactNode }) => {
     setFilteredData(filtered)
   }
 
+  const saveSearchText = (search: string) => {
+    setSearchText(search)
+  }
+
   const saveSelected = (selected: StartupsData) => {
     setSelectedData(selected)
   }
@@ -248,8 +260,30 @@ export const StartupProvider = ({ children }: { children: ReactNode }) => {
       })
   }
 
-  const searchData = (searchValue: string) => {
-    const sanitizedString = searchValue.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+  const searchData = (searchValue: string, page:number) => {
+    
+    const searchPage = page + 1
+    if (searchValue.length===0) {
+      fetch(`https://app.n-sights.ai/backend-api/enterprises?limit=8&page=1`)
+      .then(response => response.json())
+      .then(data => {
+        saveData(data)
+        setFilteredData(data)
+      })
+      
+return
+    }
+
+    fetch(`https://app.n-sights.ai/backend-api/enterprises/search?string=${searchValue}&limit=8&page=${searchPage}`)
+      .then(response => response.json())
+      .then(data => {
+        saveData(data)
+        setFilteredData(data)
+      })
+  };
+
+  const filterData = (filter: string) => {
+    const sanitizedString = filter.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
     const searchRegex = new RegExp(`\\.*${sanitizedString}.*`, "ig");
     const filteredRows = startupsData.data.filter((o: any) => {
       return Object.keys(o).some((k: any) => {
@@ -276,27 +310,27 @@ export const StartupProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const cleanFilteredData = (filterField?: any) => {
-    
-    if(filterField){
-      const filter = {[filterField]: []}
+
+    if (filterField) {
+      const filter = { [filterField]: [] }
       const dataToSave = multipleFilterSearch(filter)
-      if(dataToSave.length === 0) {
-        saveFiltered({...startupsData})
-        
-return 
+      if (dataToSave.length === 0) {
+        saveFiltered({ ...startupsData })
+
+        return
       }
-      saveFiltered({...startupsData, data:dataToSave})
-      
-return 
+      saveFiltered({ ...startupsData, data: dataToSave })
+
+      return
     }
     setStartupsData(startupsData);
   };
 
-  const clearFilters =()=>{
+  const clearFilters = () => {
     setFilters(defaultFilters)
   }
 
-  return <StartupContext.Provider value={{ saveSelected, clearFilters, selectedData, saveFiltered, filteredData, startupsData, filters, saveData, searchData, cleanFilteredData, multipleFilterSearch }}>{children}</StartupContext.Provider>
+  return <StartupContext.Provider value={{ saveSelected, filterData, clearFilters, selectedData, saveFiltered, filteredData, startupsData, filters,searchText, saveData, saveSearchText, searchData, cleanFilteredData, multipleFilterSearch }}>{children}</StartupContext.Provider>
 }
 
 export const StartupConsumer = StartupContext.Consumer
